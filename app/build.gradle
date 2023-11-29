@@ -1,10 +1,22 @@
+buildscript {
+    repositories {
+        google()
+    }
+    dependencies {
+        def nav_version = "2.7.5"
+        classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$nav_version"
+    }
+}
+
 plugins {
-    id 'kotlin-kapt'
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+    id 'androidx.navigation.safeargs.kotlin'
 }
 
 android {
+
     namespace 'ru.abyzbaev.taskmaster'
     compileSdk 34
 
@@ -42,7 +54,7 @@ kapt {
 
 dependencies {
 
-    implementation 'androidx.core:core-ktx:1.7.0'
+    implementation 'androidx.core:core-ktx:1.12.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.10.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
@@ -51,15 +63,23 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 
     //Room
-    def room_version = "2.5.0"
+    def room_version = "2.6.1"
     implementation "androidx.room:room-ktx:$room_version"
     implementation "androidx.room:room-runtime:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
 
     //Dagger
-    def dagger_version = "2.48.1"
+    def dagger_version = "2.49"
     dependencies {
         implementation "com.google.dagger:dagger:$dagger_version"
         kapt "com.google.dagger:dagger-compiler:$dagger_version"
     }
+
+    def nav_version = "2.7.5"
+    //Naviagtion
+    implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
+    implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
+
+
+
 }

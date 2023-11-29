@@ -24,4 +24,8 @@ class TaskRepository(private val taskDao: TaskDao) {
     suspend fun getTasksByCategory(categoryId: Long): List<TaskEntity> {
         return taskDao.getTasksByCategory(categoryId)
     }
+
+    suspend fun getTaskById(taskId: Long): TaskEntity? {
+        return taskDao.getTaskById(taskId)
+    }
 }

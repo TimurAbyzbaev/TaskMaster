@@ -9,6 +9,6 @@ import ru.abyzbaev.taskmaster.data.repository.CategoryRepository
 class CategoryViewModel(private val repository: CategoryRepository) : ViewModel() {
 
     private val _categories = MutableLiveData<List<CategoryEntity>>()
-    val tasks: LiveData<List<CategoryEntity>> get() = _categories
+    val categories: LiveData<List<CategoryEntity>> get() = _categories
 
 }

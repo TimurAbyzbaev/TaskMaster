@@ -49,7 +49,10 @@ class TaskViewModel(private val repository: TaskRepository) : ViewModel() {
         val repositoryTask = repository.getAllTasks()
         if(repositoryTask.isNotEmpty()) {
             for(task in repositoryTask){
-                tasks.add(task)
+                //Проверка на то что эта задача уже есть в списке
+                if (tasks.find { it.id == task.id } == null){
+                    tasks.add(task)
+                }
             }
         } else {
             addTask()

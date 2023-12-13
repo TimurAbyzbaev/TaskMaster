@@ -19,20 +19,14 @@ class TaskViewModel(private val repository: TaskRepository) : ViewModel() {
     private val _liveData = MutableLiveData<MutableList<TaskEntity>>()
     private val liveData: LiveData<MutableList<TaskEntity>> = _liveData
 
-    private val selectedTask = MutableLiveData<TaskEntity>()
-
-    fun setSelectedTask(task: TaskEntity) {
-        selectedTask.value = task
-    }
-
-    fun getSelectedTask(): LiveData<TaskEntity> {
-        return selectedTask
-    }
-
     fun updateTaskInDB(task: TaskEntity) {
         viewModelScope.launch {
             repository.updateTask(task)
         }
+    }
+    private fun updateData() {
+        _liveData.value = mutableListOf()
+
     }
 
     fun subscribeToLiveData() : LiveData<MutableList<TaskEntity>> {
@@ -48,11 +42,9 @@ class TaskViewModel(private val repository: TaskRepository) : ViewModel() {
     suspend fun getAllTasks() {
         val repositoryTask = repository.getAllTasks()
         if(repositoryTask.isNotEmpty()) {
+            tasks.clear()
             for(task in repositoryTask){
-                //Проверка на то что эта задача уже есть в списке
-                if (tasks.find { it.id == task.id } == null){
-                    tasks.add(task)
-                }
+                tasks.add(task)
             }
         } else {
             addTask()

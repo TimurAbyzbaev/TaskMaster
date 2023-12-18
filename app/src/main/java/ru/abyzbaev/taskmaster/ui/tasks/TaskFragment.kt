@@ -16,6 +16,7 @@ import ru.abyzbaev.taskmaster.R
 import ru.abyzbaev.taskmaster.app.TaskMasterApplication
 import ru.abyzbaev.taskmaster.data.model.TaskEntity
 import ru.abyzbaev.taskmaster.databinding.FragmentTaskBinding
+import ru.abyzbaev.taskmaster.ui.categories.CategoryFragmentDirections
 import javax.inject.Inject
 
 class TaskFragment : Fragment() {
@@ -69,7 +70,20 @@ class TaskFragment : Fragment() {
     }
 
     private fun navigateToTaskDetailFragment(taskId: Long) {
-        val action = TaskFragmentDirections.actionTaskFragmentToTaskDetailFragment(taskId)
+        //val action = TaskFragmentDirections.actionTaskFragmentToTaskDetailFragment(taskId)
+        val action = CategoryFragmentDirections.actionCategoryFragmentToTaskDetailFragment(taskId)
         findNavController().navigate(action)
+    }
+
+    companion object {
+        private const val ARG_CATEGORY_ID = "CATEGORY_ID"
+
+        fun newInstance(categoryId: Long) :TaskFragment {
+            val fragment = TaskFragment()
+            val args = Bundle()
+            args.putLong(ARG_CATEGORY_ID, categoryId)
+            fragment.arguments = args
+            return fragment
+        }
     }
 }

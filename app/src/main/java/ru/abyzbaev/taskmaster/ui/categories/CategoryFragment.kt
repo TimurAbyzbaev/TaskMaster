@@ -6,11 +6,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import ru.abyzbaev.taskmaster.R
 import ru.abyzbaev.taskmaster.app.TaskMasterApplication
+import ru.abyzbaev.taskmaster.databinding.FragmentCategoryBinding
+import ru.abyzbaev.taskmaster.ui.tasks.TaskFragment
 import javax.inject.Inject
 
 class CategoryFragment: Fragment() {
@@ -19,6 +21,27 @@ class CategoryFragment: Fragment() {
     lateinit var viewModelFactory: CategoryViewModelFactory
 
     private lateinit var viewModel: CategoryViewModel
+
+    private var _binding: FragmentCategoryBinding? = null
+    private val binding get() = _binding!!
+
+    private val adapter: CategoryAdapter by lazy {
+        CategoryAdapter {categoryId ->
+            showTaskFragment(categoryId)
+        }
+    }
+
+    private fun showTaskFragment(categoryId: Long) {
+        val taskFragment = TaskFragment.newInstance(categoryId)
+
+        val fragmentManager = childFragmentManager
+
+        val transaction = fragmentManager.beginTransaction()
+
+        transaction.replace(R.id.tasks_container, taskFragment)
+
+        transaction.commit()
+    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -30,22 +53,28 @@ class CategoryFragment: Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_category, container, false)
+        _binding = FragmentCategoryBinding.inflate(layoutInflater)
+        val view = binding.root
+
+        return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        //init viewModel
-        viewModel = ViewModelProvider(this, viewModelFactory).get(CategoryViewModel::class.java)
-        val recyclerView: RecyclerView = view.findViewById(R.id.recycler_view_categories)
-        val adapter = CategoryAdapter(emptyList()) // сюда передать начальный список категорий
-        recyclerView.layoutManager = LinearLayoutManager(context)
-
-        viewModel.categories
-
-        viewModel.categories.observe(viewLifecycleOwner) { categories ->
-            adapter.submitList(categories)
-        }
+        initViewModel()
+        binding.recyclerViewCategories.adapter = adapter
 
     }
+
+    private fun initViewModel() {
+        if(binding.recyclerViewCategories.adapter != null) {
+            throw IllegalStateException("The viewModel should initialised first")
+        }
+        viewModel = ViewModelProvider(this, viewModelFactory).get(CategoryViewModel::class.java)
+
+        viewModel.subscribeToLiveData().observe(this.viewLifecycleOwner, Observer {
+            adapter.submitList(it)
+        })
+    }
+    //TODO Метод навигации
 }

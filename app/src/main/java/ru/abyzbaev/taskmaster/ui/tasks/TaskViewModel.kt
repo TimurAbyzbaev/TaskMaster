@@ -50,7 +50,10 @@ class TaskViewModel(private val repository: TaskRepository) : ViewModel() {
                 }
             }
         } else {
-            addTask()
+            addTask("task1", 1L)
+            addTask("task2", 1L)
+            addTask("task3", 2L)
+            addTask("task4", 2L)
         }
     }
     
@@ -58,10 +61,10 @@ class TaskViewModel(private val repository: TaskRepository) : ViewModel() {
         return repository.getTaskById(id)
     }
 
-    fun addTask(name: String = "New task") {
+    fun addTask(name: String = "New task", categoryId: Long) {
         val id = Random.nextLong()
         val dueDate = System.currentTimeMillis() + 86400000
-        val newTask = TaskEntity(id, name, "Description", dueDate, 0L)
+        val newTask = TaskEntity(id, name, "Description", dueDate, categoryId)
         insertTaskInDB(newTask)
     }
 

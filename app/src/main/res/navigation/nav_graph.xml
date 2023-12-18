@@ -3,7 +3,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/taskFragment">
+    app:startDestination="@id/categoryFragment">
+
+    <fragment
+        android:id="@+id/categoryFragment"
+        android:name="ru.abyzbaev.taskmaster.ui.categories.CategoryFragment"
+        android:label="CategoryFragment"
+        tools:layout="@layout/fragment_category">
+
+        <action
+            android:id="@+id/action_categoryFragment_to_taskDetailFragment"
+            app:destination="@id/taskDetailFragment" >
+        </action>
+    </fragment>
 
     <fragment
         android:id="@+id/taskFragment"
@@ -11,10 +23,10 @@
         android:label="TaskFragment"
         tools:layout="@layout/fragment_task">
 
-        <action
-            android:id="@+id/action_taskFragment_to_taskDetailFragment"
-            app:destination="@id/taskDetailFragment" >
-        </action>
+<!--        <action-->
+<!--            android:id="@+id/action_taskFragment_to_taskDetailFragment"-->
+<!--            app:destination="@id/taskDetailFragment" >-->
+<!--        </action>-->
     </fragment>
 
     <fragment

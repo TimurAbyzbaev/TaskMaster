@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -20,6 +21,7 @@ import ru.abyzbaev.taskmaster.R
 import ru.abyzbaev.taskmaster.app.TaskMasterApplication
 import ru.abyzbaev.taskmaster.data.model.TaskEntity
 import ru.abyzbaev.taskmaster.databinding.FragmentTaskDetailBinding
+import ru.abyzbaev.taskmaster.ui.categories.CategoryFragmentDirections
 import javax.inject.Inject
 
 class TaskDetailFragment : Fragment() {
@@ -37,6 +39,19 @@ class TaskDetailFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
+
+        val callback = object : OnBackPressedCallback(
+            true // default to enabled
+        ) {
+            override fun handleOnBackPressed() {
+                navigateToCategoryFragment()
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(
+            this, // LifecycleOwner
+            callback
+        )
+
         (requireActivity().application as? TaskMasterApplication)?.appComponent?.inject(this)
     }
 
@@ -105,6 +120,33 @@ class TaskDetailFragment : Fragment() {
         } else {
             val newTask = TaskEntity(title = title, description = description, categoryId = category, dueDate = 0L)
         }
-        findNavController().popBackStack()
+        //findNavController().popBackStack()
+        navigateToCategoryFragment()
     }
+
+    private fun navigateToCategoryFragment() {
+        val action = TaskDetailFragmentDirections.actionTaskDetailFragmentToCategoryFragment()
+        findNavController().navigate(action)
+    }
+
+
 }
+
+/*
+class FormEntryFragment : Fragment() {
+  override fun onAttach(context: Context) {
+    super.onAttach(context)
+    val callback = object : OnBackPressedCallback(
+      true // default to enabled
+    ) {
+      override fun handleOnBackPressed() {
+        showAreYouSureDialog()
+      }
+    }
+    requireActivity().onBackPressedDispatcher.addCallback(
+      this, // LifecycleOwner
+      callback
+    )
+  }
+}
+ */

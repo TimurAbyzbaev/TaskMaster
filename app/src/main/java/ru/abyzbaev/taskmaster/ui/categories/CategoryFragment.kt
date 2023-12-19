@@ -76,5 +76,4 @@ class CategoryFragment: Fragment() {
             adapter.submitList(it)
         })
     }
-    //TODO Метод навигации
 }

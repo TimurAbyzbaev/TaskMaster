@@ -20,6 +20,6 @@ interface TaskDao {
     @Query("SELECT * FROM tasks WHERE id LIKE :taskId")
     suspend fun getTaskById(taskId: Long): TaskEntity?
 
-    @Query("SELECT * FROM tasks WHERE categoryId = :categoryId")
+    @Query("SELECT * FROM tasks WHERE categoryId LIKE :categoryId")
     suspend fun getTasksByCategory(categoryId: Long): List<TaskEntity>
 }

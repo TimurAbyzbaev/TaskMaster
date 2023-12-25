@@ -1,6 +1,6 @@
 package ru.abyzbaev.taskmaster.ui.tasks
 
-import android.annotation.SuppressLint
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -13,7 +13,7 @@ import ru.abyzbaev.taskmaster.data.repository.TaskRepository
 import kotlin.random.Random
 
 class TaskViewModel(private val repository: TaskRepository) : ViewModel() {
-    private val tasks : MutableList<TaskEntity> = mutableListOf()
+    private val tasks: MutableList<TaskEntity> = mutableListOf()
 
 
     private val _liveData = MutableLiveData<MutableList<TaskEntity>>()
@@ -24,30 +24,43 @@ class TaskViewModel(private val repository: TaskRepository) : ViewModel() {
             repository.updateTask(task)
         }
     }
+
     private fun updateData() {
         _liveData.value = mutableListOf()
 
     }
 
-    fun subscribeToLiveData() : LiveData<MutableList<TaskEntity>> {
+    fun subscribeToLiveData(categoryId: Long?): LiveData<MutableList<TaskEntity>> {
         viewModelScope.launch {
-            withContext(Dispatchers.Default) {
-                getAllTasks()
+            withContext(Dispatchers.Main) {
+                if (categoryId != null) {
+                    getTaskByCategory(categoryId)
+                    _liveData.postValue(tasks)
+                }
             }
         }
-        _liveData.postValue(tasks)
+        //_liveData.postValue(tasks)
+        Log.d("####", "_liveData TaskViewModel post $tasks")
         return liveData
+    }
+
+    suspend fun getTaskByCategory(categoryId: Long) {
+        val repositoryTasks = repository.getTasksByCategory(categoryId)
+        if (repositoryTasks.isNotEmpty()) {
+            tasks.clear()
+            for (task in repositoryTasks) {
+                tasks.add(task)
+            }
+        }
+        Log.d("####", "getTaskByCategory - ${tasks[0]} ${tasks[1]}")
     }
 
     suspend fun getAllTasks() {
         val repositoryTask = repository.getAllTasks()
-        if(repositoryTask.isNotEmpty()) {
+        if (repositoryTask.isNotEmpty()) {
             tasks.clear()
-            for(task in repositoryTask){
-                //Проверка на то что эта задача уже есть в списке
-                if (tasks.find { it.id == task.id } == null){
-                    tasks.add(task)
-                }
+            for (task in repositoryTask) {
+                tasks.add(task)
             }
         } else {
             addTask("task1", 1L)
@@ -56,7 +69,7 @@ class TaskViewModel(private val repository: TaskRepository) : ViewModel() {
             addTask("task4", 2L)
         }
     }
-    
+
     suspend fun getTask(id: Long): TaskEntity? {
         return repository.getTaskById(id)
     }
@@ -80,7 +93,4 @@ class TaskViewModel(private val repository: TaskRepository) : ViewModel() {
         }
         tasks.remove(task)
     }
-
-
-
 }

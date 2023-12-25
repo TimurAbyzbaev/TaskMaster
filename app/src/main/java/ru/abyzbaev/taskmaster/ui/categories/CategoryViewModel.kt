@@ -8,7 +8,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ru.abyzbaev.taskmaster.data.model.CategoryEntity
-import ru.abyzbaev.taskmaster.data.model.TaskEntity
 import ru.abyzbaev.taskmaster.data.repository.CategoryRepository
 import kotlin.random.Random
 
@@ -30,15 +29,14 @@ class CategoryViewModel(private val repository: CategoryRepository) : ViewModel(
 
     suspend fun getAllCategoties() {
         val repositoryCategory = repository.getAllCategories()
-        if(repositoryCategory.isNotEmpty()) {
+        if (repositoryCategory.isNotEmpty()) {
             categories.clear()
             for (category in repositoryCategory) {
-                if(categories.find { it.id == category.id } == null) {
+                if (categories.find { it.id == category.id } == null) {
                     categories.add(category)
                 }
             }
-        }
-        else {
+        } else {
             addCategory("category 1", 1L)
             addCategory("category 2", 2L)
         }

@@ -5,23 +5,18 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import ru.abyzbaev.taskmaster.R
 import ru.abyzbaev.taskmaster.app.TaskMasterApplication
 import ru.abyzbaev.taskmaster.data.model.TaskEntity
 import ru.abyzbaev.taskmaster.databinding.FragmentTaskDetailBinding
-import ru.abyzbaev.taskmaster.ui.categories.CategoryFragmentDirections
 import javax.inject.Inject
 
 class TaskDetailFragment : Fragment() {
@@ -30,7 +25,7 @@ class TaskDetailFragment : Fragment() {
     lateinit var viewModelFactory: TaskViewModelFactory
 
     private lateinit var viewModel: TaskViewModel
-    private var taskId:Long? = null
+    private var taskId: Long? = null
 
     private var _binding: FragmentTaskDetailBinding? = null
     private val binding get() = _binding!!
@@ -78,36 +73,26 @@ class TaskDetailFragment : Fragment() {
                     initView()
 
                 }
-            }
-            else {
+            } else {
                 throw IllegalStateException("No attached task")
             }
         }
-
-
     }
 
     private fun initView() {
         binding.buttonSave.setOnClickListener {
             saveTask()
         }
-
         binding.titleTask.setText(task.title)
         binding.categoryTask.setText(task.categoryId.toString())
         binding.descriptionTask.setText(task.description)
     }
 
-//    private fun observeSelectedTask() {
-//        viewModel.tasks.observe(viewLifecycleOwner) { tasks ->
-//            val selectedTask = tasks.find { it.id == taskId }
-//            viewModel.setSelectedTask(selectedTask)
-//        }
-//    }
-
     private fun saveTask() {
         val title: String = view?.findViewById<EditText>(R.id.title_task)?.text.toString()
-        val description: String = view?.findViewById<EditText>(R.id.description_task)?.text.toString()
-        val category : Long = try {
+        val description: String =
+            view?.findViewById<EditText>(R.id.description_task)?.text.toString()
+        val category: Long = try {
             view?.findViewById<EditText>(R.id.category_task)?.text.toString().toLong()
         } catch (e: NumberFormatException) {
             Toast.makeText(requireContext(), "Not valid category number", Toast.LENGTH_SHORT).show()
@@ -118,9 +103,13 @@ class TaskDetailFragment : Fragment() {
             val editedTask = TaskEntity(taskId!!, title, description, 0L, category)
             viewModel.updateTaskInDB(editedTask)
         } else {
-            val newTask = TaskEntity(title = title, description = description, categoryId = category, dueDate = 0L)
+            val newTask = TaskEntity(
+                title = title,
+                description = description,
+                categoryId = category,
+                dueDate = 0L
+            )
         }
-        //findNavController().popBackStack()
         navigateToCategoryFragment()
     }
 
@@ -128,25 +117,4 @@ class TaskDetailFragment : Fragment() {
         val action = TaskDetailFragmentDirections.actionTaskDetailFragmentToCategoryFragment()
         findNavController().navigate(action)
     }
-
-
 }
-
-/*
-class FormEntryFragment : Fragment() {
-  override fun onAttach(context: Context) {
-    super.onAttach(context)
-    val callback = object : OnBackPressedCallback(
-      true // default to enabled
-    ) {
-      override fun handleOnBackPressed() {
-        showAreYouSureDialog()
-      }
-    }
-    requireActivity().onBackPressedDispatcher.addCallback(
-      this, // LifecycleOwner
-      callback
-    )
-  }
-}
- */

@@ -22,6 +22,7 @@ import ru.abyzbaev.taskmaster.databinding.FragmentTaskDetailBinding
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
+import kotlin.random.Random
 
 class TaskDetailFragment : Fragment() {
 
@@ -73,7 +74,17 @@ class TaskDetailFragment : Fragment() {
 
         arguments?.let {
             taskId = it.getLong("taskId", -1)
-            if (taskId != -1L) {
+            if(taskId == 0L) {
+                //adding new task
+                val id = Random.nextLong()
+                val name = "New Task"
+                val dueDate = System.currentTimeMillis() + 86400000
+                val categoryId = 0L
+                val newTask = TaskEntity(id, name, "Description", dueDate, categoryId)
+                task = newTask
+                initView()
+            }
+            else if (taskId != -1L) {
                 viewModel.viewModelScope.launch {
                     task = viewModel.getTask(taskId!!)!!
                     initView()
@@ -92,6 +103,7 @@ class TaskDetailFragment : Fragment() {
         binding.dueDate.setOnClickListener {
             showDatePicker()
         }
+        selectedDate = task.dueDate
         binding.dueDate.text = formatDateFromLong(task.dueDate)
         binding.titleTask.setText(task.title)
         binding.categoryTask.setText(task.categoryId.toString())

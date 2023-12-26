@@ -37,6 +37,7 @@ class CategoryViewModel(private val repository: CategoryRepository) : ViewModel(
                 }
             }
         } else {
+            addCategory("Unknown", 0L)
             addCategory("category 1", 1L)
             addCategory("category 2", 2L)
         }

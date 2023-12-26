@@ -1,6 +1,8 @@
 package ru.abyzbaev.taskmaster.ui.tasks
 
+import android.app.Application
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,8 +10,10 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import ru.abyzbaev.taskmaster.data.di.AppComponent
 import ru.abyzbaev.taskmaster.data.model.TaskEntity
 import ru.abyzbaev.taskmaster.data.repository.TaskRepository
+import ru.abyzbaev.taskmaster.di.AppModule
 import kotlin.random.Random
 
 class TaskViewModel(private val repository: TaskRepository) : ViewModel() {
@@ -21,7 +25,12 @@ class TaskViewModel(private val repository: TaskRepository) : ViewModel() {
 
     fun updateTaskInDB(task: TaskEntity) {
         viewModelScope.launch {
-            repository.updateTask(task)
+            if(tasks.contains(task)){
+                repository.updateTask(task)
+            } else {
+                repository.insertTask(task)
+            }
+
         }
     }
 

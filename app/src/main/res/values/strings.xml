@@ -5,4 +5,5 @@
     <string name="save_button">Save</string>
     <string name="hint_title_task">Text title task</string>
     <string name="hint_category_task">Text category task</string>
+    <string name="add_new_task">Добавить новую задачу</string>
 </resources>

@@ -14,7 +14,10 @@ import ru.abyzbaev.taskmaster.data.repository.CategoryRepository
 import ru.abyzbaev.taskmaster.data.repository.TaskRepository
 import kotlin.random.Random
 
-class TaskViewModel(private val taskRepository: TaskRepository, private val categoryRepository: CategoryRepository) : ViewModel() {
+class TaskViewModel(
+    private val taskRepository: TaskRepository,
+    private val categoryRepository: CategoryRepository
+) : ViewModel() {
     private val tasks: MutableList<TaskEntity> = mutableListOf()
     private val categories: ArrayList<CategoryEntity> = arrayListOf()
 
@@ -27,6 +30,7 @@ class TaskViewModel(private val taskRepository: TaskRepository, private val cate
     fun getCategoriesList(): List<CategoryEntity> {
         return categories
     }
+
     private suspend fun getCategories() {
         val repositoryCategories = categoryRepository.getAllCategories()
         if (repositoryCategories.isNotEmpty()) {
@@ -40,7 +44,7 @@ class TaskViewModel(private val taskRepository: TaskRepository, private val cate
     fun updateTaskInDB(task: TaskEntity) {
         viewModelScope.launch {
             val tasksRepository = taskRepository.getAllTasks()
-            if(tasksRepository.contains(task)){
+            if (tasksRepository.find { it.id == task.id } != null) {
                 taskRepository.updateTask(task)
             } else {
                 taskRepository.insertTask(task)
@@ -54,7 +58,7 @@ class TaskViewModel(private val taskRepository: TaskRepository, private val cate
     }
 
     fun subscribeToCategoriesList(): LiveData<List<CategoryEntity>> {
-        viewModelScope.launch{
+        viewModelScope.launch {
             withContext(Dispatchers.Default) {
                 getCategories()
                 _categoriesLiveData.postValue(categories)

@@ -4,13 +4,11 @@ import android.app.Application
 import android.content.Context
 import dagger.Module
 import dagger.Provides
-import ru.abyzbaev.taskmaster.app.TaskMasterApplication
 import ru.abyzbaev.taskmaster.data.dao.CategoryDao
 import ru.abyzbaev.taskmaster.data.dao.TaskDao
 import ru.abyzbaev.taskmaster.data.database.AppDatabase
 import ru.abyzbaev.taskmaster.data.repository.CategoryRepository
 import ru.abyzbaev.taskmaster.data.repository.TaskRepository
-import javax.inject.Singleton
 
 @Module
 class AppModule(private val application: Application) {
@@ -26,7 +24,7 @@ class AppModule(private val application: Application) {
     }
 
     @Provides
-    fun provideAppDatabase(context: Context) : AppDatabase {
+    fun provideAppDatabase(context: Context): AppDatabase {
         return AppDatabase.getDatabase(context)
     }
 

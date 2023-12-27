@@ -4,7 +4,6 @@ import android.app.DatePickerDialog
 import android.content.Context
 import android.icu.util.Calendar
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,7 +23,6 @@ import ru.abyzbaev.taskmaster.databinding.FragmentTaskDetailBinding
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
-import kotlin.collections.ArrayList
 import kotlin.random.Random
 
 class TaskDetailFragment : Fragment() {
@@ -79,7 +77,7 @@ class TaskDetailFragment : Fragment() {
 
         arguments?.let {
             taskId = it.getLong("taskId", -1)
-            if(taskId == 0L) {
+            if (taskId == 0L) {
                 //adding new task
                 val id = Random.nextLong()
                 val name = "New Task"
@@ -88,8 +86,7 @@ class TaskDetailFragment : Fragment() {
                 val newTask = TaskEntity(id, name, "Description", dueDate, categoryId)
                 task = newTask
                 initView()
-            }
-            else if (taskId != -1L) {
+            } else if (taskId != -1L) {
                 taskViewModel.viewModelScope.launch {
                     task = taskViewModel.getTask(taskId!!)!!
                     initView()
@@ -100,10 +97,11 @@ class TaskDetailFragment : Fragment() {
             }
         }
 
-        taskViewModel.subscribeToCategoriesList().observe(this.viewLifecycleOwner, androidx.lifecycle.Observer {
-            categoriesList = it
-            initSpinner(categoriesList)
-        })
+        taskViewModel.subscribeToCategoriesList()
+            .observe(this.viewLifecycleOwner, androidx.lifecycle.Observer {
+                categoriesList = it
+                initSpinner(categoriesList)
+            })
 
 
     }
@@ -124,7 +122,7 @@ class TaskDetailFragment : Fragment() {
 
     private fun initSpinner(categories: List<CategoryEntity>) {
         val items: ArrayList<String> = arrayListOf()
-        for(category in categories){
+        for (category in categories) {
             items.add(category.name)
         }
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, items)
@@ -157,7 +155,7 @@ class TaskDetailFragment : Fragment() {
         val categoryName = binding.categoryTask.selectedItem
         val category = categoriesList.find { it.name == categoryName }!!.id
 
-        if(taskId == 0L) {
+        if (taskId == 0L) {
             taskId = Random.nextLong()
         }
 
@@ -186,12 +184,13 @@ class TaskDetailFragment : Fragment() {
         val month = calendar.get(Calendar.MONTH)
         val day = calendar.get(Calendar.DAY_OF_MONTH)
 
-        val datePickerDialog = DatePickerDialog(requireContext(), { _, selectedYear, selectedMonth, selectedDay ->
-            val selectedDate = Calendar.getInstance()
-            selectedDate.set(selectedYear, selectedMonth, selectedDay)
-            this.selectedDate = selectedDate.timeInMillis
-            updateDateTextView(selectedDate)
-        }, year, month, day)
+        val datePickerDialog =
+            DatePickerDialog(requireContext(), { _, selectedYear, selectedMonth, selectedDay ->
+                val selectedDate = Calendar.getInstance()
+                selectedDate.set(selectedYear, selectedMonth, selectedDay)
+                this.selectedDate = selectedDate.timeInMillis
+                updateDateTextView(selectedDate)
+            }, year, month, day)
 
         datePickerDialog.show()
     }

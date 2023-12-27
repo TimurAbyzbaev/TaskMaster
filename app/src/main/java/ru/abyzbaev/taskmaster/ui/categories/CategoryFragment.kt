@@ -1,7 +1,6 @@
 package ru.abyzbaev.taskmaster.ui.categories
 
 import android.content.Context
-import android.opengl.Visibility
 import android.os.Bundle
 import android.view.*
 import android.widget.Toast
@@ -12,7 +11,6 @@ import androidx.navigation.fragment.findNavController
 import ru.abyzbaev.taskmaster.R
 import ru.abyzbaev.taskmaster.app.TaskMasterApplication
 import ru.abyzbaev.taskmaster.databinding.FragmentCategoryBinding
-import ru.abyzbaev.taskmaster.ui.tasks.TaskFragment
 import javax.inject.Inject
 import kotlin.random.Random
 
@@ -47,7 +45,8 @@ class CategoryFragment : Fragment() {
                     viewModel.addCategory("Indefinite category", Random.nextLong())
                 }
 
-                val action = CategoryFragmentDirections.actionCategoryFragmentToTaskDetailFragment(0L)
+                val action =
+                    CategoryFragmentDirections.actionCategoryFragmentToTaskDetailFragment(0L)
                 findNavController().navigate(action)
                 Toast.makeText(requireContext(), "add new task", Toast.LENGTH_SHORT).show()
                 true
@@ -85,7 +84,7 @@ class CategoryFragment : Fragment() {
         viewModel = ViewModelProvider(this, viewModelFactory).get(CategoryViewModel::class.java)
 
         viewModel.subscribeToLiveData().observe(this.viewLifecycleOwner, Observer {
-            if (it.isEmpty()){
+            if (it.isEmpty()) {
                 binding.emptyTasksTextview.visibility = View.VISIBLE
             }
             adapter.setData(it)

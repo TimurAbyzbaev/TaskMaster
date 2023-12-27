@@ -10,7 +10,10 @@ import ru.abyzbaev.taskmaster.ui.tasks.TaskViewModelFactory
 @Module
 class ViewModelModule {
     @Provides
-    fun provideTaskViewModelFactory(taskRepository: TaskRepository, categoryRepository: CategoryRepository): TaskViewModelFactory {
+    fun provideTaskViewModelFactory(
+        taskRepository: TaskRepository,
+        categoryRepository: CategoryRepository
+    ): TaskViewModelFactory {
         return TaskViewModelFactory(taskRepository, categoryRepository)
     }
 

@@ -3,7 +3,6 @@ package ru.abyzbaev.taskmaster.data.di
 import android.app.Application
 import android.content.Context
 import dagger.Component
-import ru.abyzbaev.taskmaster.MainActivity
 import ru.abyzbaev.taskmaster.app.TaskMasterApplication
 import ru.abyzbaev.taskmaster.di.AppModule
 import ru.abyzbaev.taskmaster.di.ViewModelModule

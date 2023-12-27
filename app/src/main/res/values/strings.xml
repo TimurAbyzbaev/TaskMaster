@@ -6,4 +6,5 @@
     <string name="hint_title_task">Text title task</string>
     <string name="hint_category_task">Text category task</string>
     <string name="add_new_task">Добавить новую задачу</string>
+    <string name="there_s_nothing_here_yet">There\'s nothing here yet</string>
 </resources>

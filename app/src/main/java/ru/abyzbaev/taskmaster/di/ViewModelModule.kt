@@ -6,13 +6,12 @@ import ru.abyzbaev.taskmaster.data.repository.CategoryRepository
 import ru.abyzbaev.taskmaster.data.repository.TaskRepository
 import ru.abyzbaev.taskmaster.ui.categories.CategoryViewModelFactory
 import ru.abyzbaev.taskmaster.ui.tasks.TaskViewModelFactory
-import javax.inject.Singleton
 
 @Module
 class ViewModelModule {
     @Provides
-    fun provideTaskViewModelFactory(repository: TaskRepository): TaskViewModelFactory {
-        return TaskViewModelFactory(repository)
+    fun provideTaskViewModelFactory(taskRepository: TaskRepository, categoryRepository: CategoryRepository): TaskViewModelFactory {
+        return TaskViewModelFactory(taskRepository, categoryRepository)
     }
 
     @Provides

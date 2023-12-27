@@ -1,6 +1,7 @@
 package ru.abyzbaev.taskmaster.ui.categories
 
 import android.content.Context
+import android.opengl.Visibility
 import android.os.Bundle
 import android.view.*
 import android.widget.Toast
@@ -13,6 +14,7 @@ import ru.abyzbaev.taskmaster.app.TaskMasterApplication
 import ru.abyzbaev.taskmaster.databinding.FragmentCategoryBinding
 import ru.abyzbaev.taskmaster.ui.tasks.TaskFragment
 import javax.inject.Inject
+import kotlin.random.Random
 
 class CategoryFragment : Fragment() {
 
@@ -41,12 +43,12 @@ class CategoryFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.add_new_task -> {
+                if (adapter.itemCount == 0) {
+                    viewModel.addCategory("Indefinite category", Random.nextLong())
+                }
+
                 val action = CategoryFragmentDirections.actionCategoryFragmentToTaskDetailFragment(0L)
                 findNavController().navigate(action)
-//                childFragmentManager.beginTransaction()
-//                    .replace(R.id.categoryFragment, TaskFragment.newInstance(0L))
-//                    .addToBackStack(null)
-//                    .commit()
                 Toast.makeText(requireContext(), "add new task", Toast.LENGTH_SHORT).show()
                 true
             }
@@ -83,6 +85,9 @@ class CategoryFragment : Fragment() {
         viewModel = ViewModelProvider(this, viewModelFactory).get(CategoryViewModel::class.java)
 
         viewModel.subscribeToLiveData().observe(this.viewLifecycleOwner, Observer {
+            if (it.isEmpty()){
+                binding.emptyTasksTextview.visibility = View.VISIBLE
+            }
             adapter.setData(it)
         })
     }

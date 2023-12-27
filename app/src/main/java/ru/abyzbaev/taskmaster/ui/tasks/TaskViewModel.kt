@@ -1,8 +1,6 @@
 package ru.abyzbaev.taskmaster.ui.tasks
 
-import android.app.Application
 import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -10,27 +8,43 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import ru.abyzbaev.taskmaster.data.di.AppComponent
+import ru.abyzbaev.taskmaster.data.model.CategoryEntity
 import ru.abyzbaev.taskmaster.data.model.TaskEntity
+import ru.abyzbaev.taskmaster.data.repository.CategoryRepository
 import ru.abyzbaev.taskmaster.data.repository.TaskRepository
-import ru.abyzbaev.taskmaster.di.AppModule
 import kotlin.random.Random
 
-class TaskViewModel(private val repository: TaskRepository) : ViewModel() {
+class TaskViewModel(private val taskRepository: TaskRepository, private val categoryRepository: CategoryRepository) : ViewModel() {
     private val tasks: MutableList<TaskEntity> = mutableListOf()
-
+    private val categories: ArrayList<CategoryEntity> = arrayListOf()
 
     private val _liveData = MutableLiveData<MutableList<TaskEntity>>()
     private val liveData: LiveData<MutableList<TaskEntity>> = _liveData
 
+    private val _categoriesLiveData = MutableLiveData<List<CategoryEntity>>()
+    private val categoriesLiveData: LiveData<List<CategoryEntity>> = _categoriesLiveData
+
+    fun getCategoriesList(): List<CategoryEntity> {
+        return categories
+    }
+    private suspend fun getCategories() {
+        val repositoryCategories = categoryRepository.getAllCategories()
+        if (repositoryCategories.isNotEmpty()) {
+            categories.clear()
+            for (category in repositoryCategories) {
+                categories.add(category)
+            }
+        }
+    }
+
     fun updateTaskInDB(task: TaskEntity) {
         viewModelScope.launch {
-            if(tasks.contains(task)){
-                repository.updateTask(task)
+            val tasksRepository = taskRepository.getAllTasks()
+            if(tasksRepository.contains(task)){
+                taskRepository.updateTask(task)
             } else {
-                repository.insertTask(task)
+                taskRepository.insertTask(task)
             }
-
         }
     }
 
@@ -39,11 +53,22 @@ class TaskViewModel(private val repository: TaskRepository) : ViewModel() {
 
     }
 
+    fun subscribeToCategoriesList(): LiveData<List<CategoryEntity>> {
+        viewModelScope.launch{
+            withContext(Dispatchers.Default) {
+                getCategories()
+                _categoriesLiveData.postValue(categories)
+            }
+        }
+        return categoriesLiveData
+    }
+
     fun subscribeToLiveData(categoryId: Long?): LiveData<MutableList<TaskEntity>> {
         viewModelScope.launch {
             withContext(Dispatchers.Main) {
                 if (categoryId != null) {
                     getTaskByCategory(categoryId)
+                    //getAllTasks()
                     _liveData.postValue(tasks)
                 }
             }
@@ -54,18 +79,17 @@ class TaskViewModel(private val repository: TaskRepository) : ViewModel() {
     }
 
     suspend fun getTaskByCategory(categoryId: Long) {
-        val repositoryTasks = repository.getTasksByCategory(categoryId)
+        val repositoryTasks = taskRepository.getTasksByCategory(categoryId)
         if (repositoryTasks.isNotEmpty()) {
             tasks.clear()
             for (task in repositoryTasks) {
                 tasks.add(task)
             }
         }
-        Log.d("####", "getTaskByCategory - ${tasks[0]} ${tasks[1]}")
     }
 
     suspend fun getAllTasks() {
-        val repositoryTask = repository.getAllTasks()
+        val repositoryTask = taskRepository.getAllTasks()
         if (repositoryTask.isNotEmpty()) {
             tasks.clear()
             for (task in repositoryTask) {
@@ -80,7 +104,7 @@ class TaskViewModel(private val repository: TaskRepository) : ViewModel() {
     }
 
     suspend fun getTask(id: Long): TaskEntity? {
-        return repository.getTaskById(id)
+        return taskRepository.getTaskById(id)
     }
 
     fun addTask(name: String = "New task", categoryId: Long) {
@@ -92,13 +116,13 @@ class TaskViewModel(private val repository: TaskRepository) : ViewModel() {
 
     private fun insertTaskInDB(task: TaskEntity) {
         viewModelScope.launch {
-            repository.insertTask(task)
+            taskRepository.insertTask(task)
         }
     }
 
     fun deleteTask(task: TaskEntity) {
         viewModelScope.launch {
-            repository.deleteTask(task)
+            taskRepository.deleteTask(task)
         }
         tasks.remove(task)
     }

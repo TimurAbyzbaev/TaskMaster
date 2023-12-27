@@ -6,20 +6,45 @@
     android:layout_margin="20dp"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/category_textview"
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/category_linear_layout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Category: "
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title_task" />
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@+id/title_task">
 
-    <Spinner
-        android:id="@+id/category_task"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toEndOf="@+id/category_textview"
-        app:layout_constraintTop_toBottomOf="@+id/title_task" />
+        <TextView
+            android:id="@+id/category_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Category: "
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Spinner
+            android:id="@+id/category_task"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/category_textview"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/add_category"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/new_category_button"
+            android:textSize="10sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
 
 <!--    <EditText-->
 <!--        android:id="@+id/category_task"-->
@@ -36,11 +61,11 @@
         android:id="@+id/title_task"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="@string/hint_title_task"
         android:autofillHints="@string/hint_title_task"
+        android:hint="@string/hint_title_task"
+        android:inputType="text"
         android:textColor="@color/black"
         android:textSize="20sp"
-        android:inputType="text"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -58,7 +83,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/Lorem_ipsum_text"
-        app:layout_constraintTop_toBottomOf="@+id/category_task" />
+        app:layout_constraintTop_toBottomOf="@+id/category_linear_layout" />
 
     <Button
         android:id="@+id/button_save"

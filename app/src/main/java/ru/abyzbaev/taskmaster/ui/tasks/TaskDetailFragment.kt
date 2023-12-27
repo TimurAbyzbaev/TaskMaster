@@ -20,6 +20,7 @@ import ru.abyzbaev.taskmaster.app.TaskMasterApplication
 import ru.abyzbaev.taskmaster.data.model.CategoryEntity
 import ru.abyzbaev.taskmaster.data.model.TaskEntity
 import ru.abyzbaev.taskmaster.databinding.FragmentTaskDetailBinding
+import ru.abyzbaev.taskmaster.ui.NewCategoryFragment
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -40,7 +41,8 @@ class TaskDetailFragment : Fragment() {
     private lateinit var task: TaskEntity
 
     private var selectedDate: Long = 1L
-    private lateinit var categoriesList: List<CategoryEntity>
+    private var categoriesList: ArrayList<CategoryEntity> = arrayListOf()
+    private lateinit var adapter: ArrayAdapter<String>
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -99,7 +101,8 @@ class TaskDetailFragment : Fragment() {
 
         taskViewModel.subscribeToCategoriesList()
             .observe(this.viewLifecycleOwner, androidx.lifecycle.Observer {
-                categoriesList = it
+                categoriesList.clear()
+                categoriesList.addAll(it)
                 initSpinner(categoriesList)
             })
 
@@ -118,6 +121,23 @@ class TaskDetailFragment : Fragment() {
         binding.titleTask.setText(task.title)
         //binding.categoryTask.setText(task.categoryId.toString())
         binding.descriptionTask.setText(task.description)
+        binding.addCategory.setOnClickListener {
+            val newCategoryFragment = NewCategoryFragment.newInstance()
+            newCategoryFragment.setOnAddClickListener(object :
+                NewCategoryFragment.OnAddClickListener {
+                override fun onClick(categoryName: String) {
+                    addNewCategory(categoryName)
+                }
+            })
+            newCategoryFragment.show(childFragmentManager, BOTTOM_SHEET_FRAGMENT_DIALOG_TAG)
+        }
+
+    }
+
+    private fun addNewCategory(categoryName: String){
+        taskViewModel.addCategory(categoryName)
+        initSpinner(categoriesList)
+        adapter.notifyDataSetChanged()
     }
 
     private fun initSpinner(categories: List<CategoryEntity>) {
@@ -125,7 +145,7 @@ class TaskDetailFragment : Fragment() {
         for (category in categories) {
             items.add(category.name)
         }
-        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, items)
+        adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, items)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.categoryTask.adapter = adapter
 
@@ -147,6 +167,35 @@ class TaskDetailFragment : Fragment() {
             }
         }
     }
+
+
+//    private fun initSpinner(categories: List<CategoryEntity>) {
+//        val items: ArrayList<String> = arrayListOf()
+//        for (category in categories) {
+//            items.add(category.name)
+//        }
+//        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, items)
+//        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+//        binding.categoryTask.adapter = adapter
+//
+//        binding.categoryTask.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+//            override fun onItemSelected(
+//                parentView: AdapterView<*>?,
+//                selectedItemView: View?,
+//                position: Int,
+//                id: Long
+//            ) {
+//                // Выбран элемент списка
+//                val selectedItem = items
+//                Toast.makeText(requireContext(), "Selected: $selectedItem", Toast.LENGTH_SHORT)
+//                    .show()
+//            }
+//
+//            override fun onNothingSelected(parentView: AdapterView<*>?) {
+//                // Ничего не выбрано
+//            }
+//        }
+//    }
 
     private fun saveTask() {
         val title: String = binding.titleTask.text.toString()
@@ -205,5 +254,10 @@ class TaskDetailFragment : Fragment() {
         val dateFormat = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
         val date = Date(dateInMillis)
         return dateFormat.format(date)
+    }
+
+    companion object {
+        private const val BOTTOM_SHEET_FRAGMENT_DIALOG_TAG =
+            "74a54328-5d62-46bf-ab6b-cbf5fgt0-092395"
     }
 }

@@ -118,6 +118,19 @@ class TaskViewModel(
         insertTaskInDB(newTask)
     }
 
+    fun addCategory(categoryName: String) {
+        val id = Random.nextLong()
+        val newCategory = CategoryEntity(id, categoryName)
+        insertCategoryInDB(newCategory)
+
+    }
+
+    private fun insertCategoryInDB(category: CategoryEntity) {
+        viewModelScope.launch {
+            categoryRepository.insertCategory(category)
+        }
+    }
+
     private fun insertTaskInDB(task: TaskEntity) {
         viewModelScope.launch {
             taskRepository.insertTask(task)

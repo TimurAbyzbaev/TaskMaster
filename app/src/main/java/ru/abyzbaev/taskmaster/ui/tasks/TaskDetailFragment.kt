@@ -166,6 +166,8 @@ class TaskDetailFragment : Fragment() {
                 // Ничего не выбрано
             }
         }
+        val pos = categories.indexOf(categories.find { it.id == task.categoryId })
+        binding.categoryTask.setSelection(pos)
     }
 
 

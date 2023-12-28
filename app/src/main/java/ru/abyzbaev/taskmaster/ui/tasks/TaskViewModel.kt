@@ -27,9 +27,6 @@ class TaskViewModel(
     private val _categoriesLiveData = MutableLiveData<List<CategoryEntity>>()
     private val categoriesLiveData: LiveData<List<CategoryEntity>> = _categoriesLiveData
 
-    fun getCategoriesList(): List<CategoryEntity> {
-        return categories
-    }
 
     private suspend fun getCategories() {
         val repositoryCategories = categoryRepository.getAllCategories()
@@ -39,6 +36,7 @@ class TaskViewModel(
                 categories.add(category)
             }
         }
+        updateData()
     }
 
     fun updateTaskInDB(task: TaskEntity) {
@@ -53,8 +51,7 @@ class TaskViewModel(
     }
 
     private fun updateData() {
-        _liveData.value = mutableListOf()
-
+        _categoriesLiveData.postValue(categories)
     }
 
     fun subscribeToCategoriesList(): LiveData<List<CategoryEntity>> {
@@ -122,7 +119,8 @@ class TaskViewModel(
         val id = Random.nextLong()
         val newCategory = CategoryEntity(id, categoryName)
         insertCategoryInDB(newCategory)
-
+        categories.add(newCategory)
+        _categoriesLiveData.postValue(categories)
     }
 
     private fun insertCategoryInDB(category: CategoryEntity) {

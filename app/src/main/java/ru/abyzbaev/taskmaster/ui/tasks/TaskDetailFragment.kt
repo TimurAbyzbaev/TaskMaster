@@ -66,16 +66,15 @@ class TaskDetailFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentTaskDetailBinding.inflate(layoutInflater)
-        val view = binding.root
-        return view
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        taskViewModel = ViewModelProvider(this, taskViewModelFactory).get(TaskViewModel::class.java)
+        taskViewModel = ViewModelProvider(this, taskViewModelFactory)[TaskViewModel::class.java]
 
         arguments?.let {
             taskId = it.getLong("taskId", -1)
@@ -100,11 +99,11 @@ class TaskDetailFragment : Fragment() {
         }
 
         taskViewModel.subscribeToCategoriesList()
-            .observe(this.viewLifecycleOwner, androidx.lifecycle.Observer {
+            .observe(this.viewLifecycleOwner) {
                 categoriesList.clear()
                 categoriesList.addAll(it)
                 initSpinner(categoriesList)
-            })
+            }
 
 
     }
@@ -135,7 +134,9 @@ class TaskDetailFragment : Fragment() {
     }
 
     private fun addNewCategory(categoryName: String){
-        taskViewModel.addCategory(categoryName)
+        val newCategory = CategoryEntity(Random.nextLong(), categoryName)
+        categoriesList.add(newCategory)
+        task.categoryId = newCategory.id
         initSpinner(categoriesList)
         adapter.notifyDataSetChanged()
     }
@@ -157,8 +158,7 @@ class TaskDetailFragment : Fragment() {
                 id: Long
             ) {
                 // Выбран элемент списка
-                val selectedItem = items
-                Toast.makeText(requireContext(), "Selected: $selectedItem", Toast.LENGTH_SHORT)
+                Toast.makeText(requireContext(), "Selected: $items", Toast.LENGTH_SHORT)
                     .show()
             }
 
@@ -170,54 +170,26 @@ class TaskDetailFragment : Fragment() {
         binding.categoryTask.setSelection(pos)
     }
 
-
-//    private fun initSpinner(categories: List<CategoryEntity>) {
-//        val items: ArrayList<String> = arrayListOf()
-//        for (category in categories) {
-//            items.add(category.name)
-//        }
-//        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, items)
-//        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-//        binding.categoryTask.adapter = adapter
-//
-//        binding.categoryTask.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-//            override fun onItemSelected(
-//                parentView: AdapterView<*>?,
-//                selectedItemView: View?,
-//                position: Int,
-//                id: Long
-//            ) {
-//                // Выбран элемент списка
-//                val selectedItem = items
-//                Toast.makeText(requireContext(), "Selected: $selectedItem", Toast.LENGTH_SHORT)
-//                    .show()
-//            }
-//
-//            override fun onNothingSelected(parentView: AdapterView<*>?) {
-//                // Ничего не выбрано
-//            }
-//        }
-//    }
-
     private fun saveTask() {
         val title: String = binding.titleTask.text.toString()
         val description: String = binding.descriptionTask.text.toString()
         val dueDate: Long = selectedDate
         val categoryName = binding.categoryTask.selectedItem
-        val category = categoriesList.find { it.name == categoryName }!!.id
+        val category = categoriesList.find { it.name == categoryName }!!
+        taskViewModel.addCategory(category)
 
         if (taskId == 0L) {
             taskId = Random.nextLong()
         }
 
         if (taskId != null && taskId != -1L) {
-            val editedTask = TaskEntity(taskId!!, title, description, dueDate, category)
+            val editedTask = TaskEntity(taskId!!, title, description, dueDate, category.id)
             taskViewModel.updateTaskInDB(editedTask)
         } else {
-            val newTask = TaskEntity(
+            TaskEntity(
                 title = title,
                 description = description,
-                categoryId = category,
+                categoryId = category.id,
                 dueDate = 0L
             )
         }
@@ -252,7 +224,7 @@ class TaskDetailFragment : Fragment() {
         binding.dueDate.text = formattedDate
     }
 
-    fun formatDateFromLong(dateInMillis: Long): String {
+    private fun formatDateFromLong(dateInMillis: Long): String {
         val dateFormat = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
         val date = Date(dateInMillis)
         return dateFormat.format(date)

@@ -115,12 +115,12 @@ class TaskViewModel(
         insertTaskInDB(newTask)
     }
 
-    fun addCategory(categoryName: String) {
-        val id = Random.nextLong()
-        val newCategory = CategoryEntity(id, categoryName)
-        insertCategoryInDB(newCategory)
-        categories.add(newCategory)
-        _categoriesLiveData.postValue(categories)
+    fun addCategory(newCategory: CategoryEntity) {
+        if(!categories.contains(newCategory)){
+            insertCategoryInDB(newCategory)
+            categories.add(newCategory)
+            _categoriesLiveData.postValue(categories)
+        }
     }
 
     private fun insertCategoryInDB(category: CategoryEntity) {

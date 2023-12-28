@@ -10,5 +10,5 @@ data class TaskEntity(
     val title: String,
     val description: String,
     val dueDate: Long,
-    val categoryId: Long
+    var categoryId: Long
 )

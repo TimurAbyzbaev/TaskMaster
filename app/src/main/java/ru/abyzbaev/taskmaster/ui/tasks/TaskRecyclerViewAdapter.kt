@@ -7,13 +7,20 @@ import androidx.recyclerview.widget.RecyclerView
 import ru.abyzbaev.taskmaster.data.model.TaskEntity
 import ru.abyzbaev.taskmaster.databinding.TaskRecyclerviewItemBinding
 import ru.abyzbaev.taskmaster.ui.ItemTouchHelperAdapter
+import ru.abyzbaev.taskmaster.ui.OnItemDismissListener
 import java.util.*
-import kotlin.collections.ArrayList
 
-class TaskRecyclerViewAdapter(private val clickListener: (TaskEntity) -> Unit) :
+class TaskRecyclerViewAdapter(
+    private val clickListener: (TaskEntity) -> Unit,
+    private var itemDismissListener: OnItemDismissListener
+    ) :
     RecyclerView.Adapter<TaskRecyclerViewAdapter.TaskViewHolder>(), ItemTouchHelperAdapter {
 
     private var tasks: MutableList<TaskEntity> = arrayListOf()
+
+    fun setItemDismissListener(itemDismissListener: OnItemDismissListener) {
+        this.itemDismissListener = itemDismissListener
+    }
 
     fun setData(tasks: MutableList<TaskEntity>) {
         this.tasks = arrayListOf()
@@ -60,7 +67,9 @@ class TaskRecyclerViewAdapter(private val clickListener: (TaskEntity) -> Unit) :
     }
 
     override fun onItemDismiss(position: Int) {
-        tasks.remove(tasks[position])
+        val task = tasks[position]
+        itemDismissListener.onItemDismiss(task)
+        tasks.remove(task)
         notifyItemRemoved(position)
     }
 }

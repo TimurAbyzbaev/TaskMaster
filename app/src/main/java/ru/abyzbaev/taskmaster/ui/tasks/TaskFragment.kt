@@ -12,12 +12,14 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import ru.abyzbaev.taskmaster.app.TaskMasterApplication
+import ru.abyzbaev.taskmaster.data.model.TaskEntity
 import ru.abyzbaev.taskmaster.databinding.FragmentTaskBinding
+import ru.abyzbaev.taskmaster.ui.OnItemDismissListener
 import ru.abyzbaev.taskmaster.ui.SimpleItemTouchHelperCallback
 import ru.abyzbaev.taskmaster.ui.categories.CategoryFragmentDirections
 import javax.inject.Inject
 
-class TaskFragment : Fragment() {
+class TaskFragment : Fragment(), OnItemDismissListener {
 
     @Inject
     lateinit var viewModelFactory: TaskViewModelFactory
@@ -29,9 +31,9 @@ class TaskFragment : Fragment() {
 
 
     private val adapter: TaskRecyclerViewAdapter by lazy {
-        TaskRecyclerViewAdapter { task ->
+        TaskRecyclerViewAdapter ({ task ->
             navigateToTaskDetailFragment(task.id)
-        }
+        }, this)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,6 +66,7 @@ class TaskFragment : Fragment() {
         val callback: ItemTouchHelper.Callback = SimpleItemTouchHelperCallback(adapter)
         val touchHelper: ItemTouchHelper = ItemTouchHelper(callback)
         touchHelper.attachToRecyclerView(binding.recyclerViewTasks)
+
 
         Log.d("####", adapter.toString())
         Log.d("TaskFragment $this", "onViewCreated")
@@ -110,5 +113,10 @@ class TaskFragment : Fragment() {
             fragment.arguments = args
             return fragment
         }
+    }
+
+    override fun onItemDismiss(task: TaskEntity) {
+        viewModel.deleteTask(task)
+        Log.d("####", "Deleted task $task")
     }
 }

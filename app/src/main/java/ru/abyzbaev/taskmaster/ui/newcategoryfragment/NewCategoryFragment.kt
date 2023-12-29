@@ -1,4 +1,4 @@
-package ru.abyzbaev.taskmaster.ui
+package ru.abyzbaev.taskmaster.ui.newcategoryfragment
 
 import android.os.Bundle
 import android.text.Editable

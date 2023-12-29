@@ -1,7 +1,8 @@
-package ru.abyzbaev.taskmaster.ui
+package ru.abyzbaev.taskmaster.ui.itemtouchhelper
 
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import ru.abyzbaev.taskmaster.ui.itemtouchhelper.ItemTouchHelperAdapter
 
 class SimpleItemTouchHelperCallback(adapter: ItemTouchHelperAdapter): ItemTouchHelper.Callback() {
     private val mAdapter: ItemTouchHelperAdapter = adapter

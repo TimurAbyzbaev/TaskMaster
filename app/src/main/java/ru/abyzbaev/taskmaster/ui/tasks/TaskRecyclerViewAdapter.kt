@@ -6,8 +6,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import ru.abyzbaev.taskmaster.data.model.TaskEntity
 import ru.abyzbaev.taskmaster.databinding.TaskRecyclerviewItemBinding
-import ru.abyzbaev.taskmaster.ui.ItemTouchHelperAdapter
-import ru.abyzbaev.taskmaster.ui.OnItemDismissListener
+import ru.abyzbaev.taskmaster.ui.itemtouchhelper.ItemTouchHelperAdapter
+import ru.abyzbaev.taskmaster.ui.itemtouchhelper.OnItemDismissListener
 import java.util.*
 
 class TaskRecyclerViewAdapter(

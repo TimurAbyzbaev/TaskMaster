@@ -20,7 +20,7 @@ import ru.abyzbaev.taskmaster.app.TaskMasterApplication
 import ru.abyzbaev.taskmaster.data.model.CategoryEntity
 import ru.abyzbaev.taskmaster.data.model.TaskEntity
 import ru.abyzbaev.taskmaster.databinding.FragmentTaskDetailBinding
-import ru.abyzbaev.taskmaster.ui.NewCategoryFragment
+import ru.abyzbaev.taskmaster.ui.newcategoryfragment.NewCategoryFragment
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject

@@ -10,12 +10,16 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.ItemTouchHelper
 import ru.abyzbaev.taskmaster.app.TaskMasterApplication
+import ru.abyzbaev.taskmaster.data.model.TaskEntity
 import ru.abyzbaev.taskmaster.databinding.FragmentTaskBinding
+import ru.abyzbaev.taskmaster.ui.OnItemDismissListener
+import ru.abyzbaev.taskmaster.ui.SimpleItemTouchHelperCallback
 import ru.abyzbaev.taskmaster.ui.categories.CategoryFragmentDirections
 import javax.inject.Inject
 
-class TaskFragment : Fragment() {
+class TaskFragment : Fragment(), OnItemDismissListener {
 
     @Inject
     lateinit var viewModelFactory: TaskViewModelFactory
@@ -25,10 +29,11 @@ class TaskFragment : Fragment() {
     private var _binding: FragmentTaskBinding? = null
     private val binding get() = _binding!!
 
+
     private val adapter: TaskRecyclerViewAdapter by lazy {
-        TaskRecyclerViewAdapter { task ->
+        TaskRecyclerViewAdapter ({ task ->
             navigateToTaskDetailFragment(task.id)
-        }
+        }, this)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,7 +50,7 @@ class TaskFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentTaskBinding.inflate(layoutInflater)
         val view = binding.root
         Log.d("TaskFragment $this", "onCreateView")
@@ -57,6 +62,12 @@ class TaskFragment : Fragment() {
 
         initViewModel()
         binding.recyclerViewTasks.adapter = adapter
+
+        val callback: ItemTouchHelper.Callback = SimpleItemTouchHelperCallback(adapter)
+        val touchHelper: ItemTouchHelper = ItemTouchHelper(callback)
+        touchHelper.attachToRecyclerView(binding.recyclerViewTasks)
+
+
         Log.d("####", adapter.toString())
         Log.d("TaskFragment $this", "onViewCreated")
     }
@@ -75,20 +86,19 @@ class TaskFragment : Fragment() {
         if (binding.recyclerViewTasks.adapter != null) {
             throw IllegalStateException("The viewModel should initialised first")
         }
-        viewModel = ViewModelProvider(this, viewModelFactory).get(TaskViewModel::class.java)
+        viewModel = ViewModelProvider(this, viewModelFactory)[TaskViewModel::class.java]
 
         val categoryId: Long? = arguments?.getLong(ARG_CATEGORY_ID)
         Log.d("####", "lifecycleOwner ${this.viewLifecycleOwner}")
-        viewModel.subscribeToLiveData(categoryId).observe(this.viewLifecycleOwner, Observer {
+        viewModel.subscribeToLiveData(categoryId).observe(this.viewLifecycleOwner) {
             activity?.runOnUiThread {
                 adapter.setData(it)
                 Log.d("####", "Adapter $adapter setData $it")
             }
-        })
+        }
     }
 
     private fun navigateToTaskDetailFragment(taskId: Long) {
-        //val action = TaskFragmentDirections.actionTaskFragmentToTaskDetailFragment(taskId)
         val action = CategoryFragmentDirections.actionCategoryFragmentToTaskDetailFragment(taskId)
         findNavController().navigate(action)
     }
@@ -103,5 +113,10 @@ class TaskFragment : Fragment() {
             fragment.arguments = args
             return fragment
         }
+    }
+
+    override fun onItemDismiss(task: TaskEntity) {
+        viewModel.deleteTask(task)
+        Log.d("####", "Deleted task $task")
     }
 }

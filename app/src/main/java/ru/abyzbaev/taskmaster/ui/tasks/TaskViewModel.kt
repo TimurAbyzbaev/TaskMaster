@@ -12,7 +12,6 @@ import ru.abyzbaev.taskmaster.data.model.CategoryEntity
 import ru.abyzbaev.taskmaster.data.model.TaskEntity
 import ru.abyzbaev.taskmaster.data.repository.CategoryRepository
 import ru.abyzbaev.taskmaster.data.repository.TaskRepository
-import kotlin.random.Random
 
 class TaskViewModel(
     private val taskRepository: TaskRepository,
@@ -69,17 +68,15 @@ class TaskViewModel(
             withContext(Dispatchers.Main) {
                 if (categoryId != null) {
                     getTaskByCategory(categoryId)
-                    //getAllTasks()
                     _liveData.postValue(tasks)
                 }
             }
         }
-        //_liveData.postValue(tasks)
         Log.d("####", "_liveData TaskViewModel post $tasks")
         return liveData
     }
 
-    suspend fun getTaskByCategory(categoryId: Long) {
+    private suspend fun getTaskByCategory(categoryId: Long) {
         val repositoryTasks = taskRepository.getTasksByCategory(categoryId)
         if (repositoryTasks.isNotEmpty()) {
             tasks.clear()
@@ -89,34 +86,12 @@ class TaskViewModel(
         }
     }
 
-    suspend fun getAllTasks() {
-        val repositoryTask = taskRepository.getAllTasks()
-        if (repositoryTask.isNotEmpty()) {
-            tasks.clear()
-            for (task in repositoryTask) {
-                tasks.add(task)
-            }
-        } else {
-            addTask("task1", 1L)
-            addTask("task2", 1L)
-            addTask("task3", 2L)
-            addTask("task4", 2L)
-        }
-    }
-
     suspend fun getTask(id: Long): TaskEntity? {
         return taskRepository.getTaskById(id)
     }
 
-    fun addTask(name: String = "New task", categoryId: Long) {
-        val id = Random.nextLong()
-        val dueDate = System.currentTimeMillis() + 86400000
-        val newTask = TaskEntity(id, name, "Description", dueDate, categoryId)
-        insertTaskInDB(newTask)
-    }
-
     fun addCategory(newCategory: CategoryEntity) {
-        if(!categories.contains(newCategory)){
+        if (!categories.contains(newCategory)) {
             insertCategoryInDB(newCategory)
             categories.add(newCategory)
             _categoriesLiveData.postValue(categories)
@@ -126,12 +101,6 @@ class TaskViewModel(
     private fun insertCategoryInDB(category: CategoryEntity) {
         viewModelScope.launch {
             categoryRepository.insertCategory(category)
-        }
-    }
-
-    private fun insertTaskInDB(task: TaskEntity) {
-        viewModelScope.launch {
-            taskRepository.insertTask(task)
         }
     }
 

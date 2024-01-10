@@ -3,7 +3,6 @@ package ru.abyzbaev.taskmaster.ui.categories
 import android.content.Context
 import android.os.Bundle
 import android.view.*
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -25,8 +24,6 @@ class CategoryFragment : Fragment(), OnEmptyCategoryListener {
 
     private var _binding: FragmentCategoryBinding? = null
     private val binding get() = _binding!!
-
-    private val categories: List<CategoryEntity> = arrayListOf()
 
     private val adapter: CategoryAdapter by lazy {
         CategoryAdapter(requireActivity().supportFragmentManager, this)
@@ -52,7 +49,6 @@ class CategoryFragment : Fragment(), OnEmptyCategoryListener {
                 val action =
                     CategoryFragmentDirections.actionCategoryFragmentToTaskDetailFragment(0L)
                 findNavController().navigate(action)
-                Toast.makeText(requireContext(), "add new task", Toast.LENGTH_SHORT).show()
                 true
             }
             else -> super.onOptionsItemSelected(item)

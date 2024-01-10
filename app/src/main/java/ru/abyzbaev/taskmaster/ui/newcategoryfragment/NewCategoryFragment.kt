@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import ru.abyzbaev.taskmaster.databinding.NewCategoryFragmentBinding
 
-class NewCategoryFragment: BottomSheetDialogFragment() {
+class NewCategoryFragment : BottomSheetDialogFragment() {
     private var _binding: NewCategoryFragmentBinding? = null
     private val binding get() = _binding!!
     private var onAddClickListener: OnAddClickListener? = null
@@ -17,8 +17,9 @@ class NewCategoryFragment: BottomSheetDialogFragment() {
     private val textWatcher = object : TextWatcher {
 
         override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-            binding.addButtonTextview.isEnabled = binding.searchEditText.text != null && !binding.searchEditText.text.toString()
-                .isEmpty()
+            binding.addButtonTextview.isEnabled =
+                binding.searchEditText.text != null && !binding.searchEditText.text.toString()
+                    .isEmpty()
         }
 
         override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}

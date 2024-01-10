@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -49,14 +48,14 @@ class TaskDetailFragment : Fragment() {
         super.onAttach(context)
 
         val callback = object : OnBackPressedCallback(
-            true // default to enabled
+            true
         ) {
             override fun handleOnBackPressed() {
                 navigateToCategoryFragment()
             }
         }
         requireActivity().onBackPressedDispatcher.addCallback(
-            this, // LifecycleOwner
+            this,
             callback
         )
 
@@ -80,7 +79,6 @@ class TaskDetailFragment : Fragment() {
         arguments?.let {
             taskId = it.getLong("taskId", -1)
             if (taskId == 0L) {
-                //adding new task
                 val id = Random.nextLong()
                 val name = "New Task"
                 val dueDate = System.currentTimeMillis() + 86400000
@@ -105,8 +103,6 @@ class TaskDetailFragment : Fragment() {
                 categoriesList.addAll(it)
                 initSpinner(categoriesList)
             }
-
-
     }
 
     private fun initView() {
@@ -119,7 +115,6 @@ class TaskDetailFragment : Fragment() {
         selectedDate = task.dueDate
         binding.dueDate.text = formatDateFromLong(task.dueDate)
         binding.titleTask.setText(task.title)
-        //binding.categoryTask.setText(task.categoryId.toString())
         binding.descriptionTask.setText(task.description)
         binding.addCategory.setOnClickListener {
             val newCategoryFragment = NewCategoryFragment.newInstance()
@@ -134,7 +129,7 @@ class TaskDetailFragment : Fragment() {
 
     }
 
-    private fun addNewCategory(categoryName: String){
+    private fun addNewCategory(categoryName: String) {
         val newCategory = CategoryEntity(Random.nextLong(), categoryName)
         categoriesList.add(newCategory)
         task.categoryId = newCategory.id
@@ -159,8 +154,6 @@ class TaskDetailFragment : Fragment() {
                 id: Long
             ) {
                 // Выбран элемент списка
-                Toast.makeText(requireContext(), "Selected: $items", Toast.LENGTH_SHORT)
-                    .show()
             }
 
             override fun onNothingSelected(parentView: AdapterView<*>?) {
@@ -224,7 +217,6 @@ class TaskDetailFragment : Fragment() {
         val formattedDate = dateFormat.format(selectedDate.time)
         binding.dueDate.text = formattedDate
     }
-
 
 
     companion object {

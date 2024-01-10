@@ -21,7 +21,7 @@ class CategoryAdapter(
     fun setData(categories: List<CategoryEntity>) {
         this.categories = arrayListOf()
         this.categories = categories
-        if(categories.isEmpty()) {
+        if (categories.isEmpty()) {
             emptyCategoryListener.onEmptyCategoryList()
         }
         notifyDataSetChanged()
@@ -45,7 +45,8 @@ class CategoryAdapter(
 
             binding.root.addView(container)
 
-            val taskFragment = TaskFragment.newInstance(category.id, category ,emptyCategoryListener)
+            val taskFragment =
+                TaskFragment.newInstance(category.id, category, emptyCategoryListener)
             fragmentManager.beginTransaction()
                 .replace(container.id, taskFragment)
                 .addToBackStack(null)

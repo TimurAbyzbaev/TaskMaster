@@ -1,17 +1,11 @@
 package ru.abyzbaev.taskmaster.ui.tasks
 
-import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.PorterDuff
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.ImageView
-import androidx.core.content.ContextCompat
-import androidx.core.graphics.drawable.DrawableCompat
 import androidx.recyclerview.widget.RecyclerView
 import ru.abyzbaev.taskmaster.R
-import ru.abyzbaev.taskmaster.app.TaskMasterApplication
 import ru.abyzbaev.taskmaster.data.model.TaskEntity
 import ru.abyzbaev.taskmaster.databinding.TaskRecyclerviewItemBinding
 import ru.abyzbaev.taskmaster.ui.itemtouchhelper.ItemTouchHelperAdapter
@@ -23,14 +17,10 @@ import java.util.*
 class TaskRecyclerViewAdapter(
     private val clickListener: (TaskEntity) -> Unit,
     private var itemDismissListener: OnItemDismissListener
-    ) :
+) :
     RecyclerView.Adapter<TaskRecyclerViewAdapter.TaskViewHolder>(), ItemTouchHelperAdapter {
     private lateinit var context: Context
     private var tasks: MutableList<TaskEntity> = arrayListOf()
-
-    fun setItemDismissListener(itemDismissListener: OnItemDismissListener) {
-        this.itemDismissListener = itemDismissListener
-    }
 
     fun setData(tasks: MutableList<TaskEntity>) {
         this.tasks = arrayListOf()
@@ -62,21 +52,21 @@ class TaskRecyclerViewAdapter(
             binding.taskName.text = task.title
             binding.dueDateTextview.text = formatDateFromLong(task.dueDate)
             var currentTimeInMillis = System.currentTimeMillis()
-            if(task.dueDate <= currentTimeInMillis){
-                binding.dueDateTextview.setTextColor(context.resources.getColor(R.color.color_error, ))
+            if (task.dueDate <= currentTimeInMillis) {
+                binding.dueDateTextview.setTextColor(context.resources.getColor(R.color.color_error))
                 changeVectorDrawableColor(binding.dueDateImg, R.color.color_error)
             } else if (task.dueDate > currentTimeInMillis
-                && task.dueDate <= currentTimeInMillis + (24 * 60 * 60 * 1000)) {
-                binding.dueDateTextview.setTextColor(context.resources.getColor(R.color.color_warning, ))
+                && task.dueDate <= currentTimeInMillis + (24 * 60 * 60 * 1000)
+            ) {
+                binding.dueDateTextview.setTextColor(context.resources.getColor(R.color.color_warning))
                 changeVectorDrawableColor(binding.dueDateImg, R.color.color_warning)
             } else {
-                binding.dueDateTextview.setTextColor(context.resources.getColor(R.color.color_black, ))
+                binding.dueDateTextview.setTextColor(context.resources.getColor(R.color.color_black))
                 changeVectorDrawableColor(binding.dueDateImg, R.color.black)
             }
             Log.d("####", "task title = " + task.title)
         }
     }
-
 
 
     override fun onItemMove(fromPosition: Int, toPosition: Int) {
@@ -85,7 +75,7 @@ class TaskRecyclerViewAdapter(
                 Collections.swap(tasks, i, i + 1)
             }
         } else {
-            for (i in fromPosition downTo  toPosition + 1) {
+            for (i in fromPosition downTo toPosition + 1) {
                 Collections.swap(tasks, i, i - 1)
             }
         }

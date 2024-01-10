@@ -36,15 +36,10 @@ class CategoryViewModel(private val repository: CategoryRepository) : ViewModel(
                     categories.add(category)
                 }
             }
-        } else {
-//            addCategory("Unknown", 0L)
-//            addCategory("category 1", 1L)
-//            addCategory("category 2", 2L)
         }
     }
 
     fun addCategory(name: String = "New Category", categoryId: Long = Random.nextLong()) {
-        //val id = Random.nextLong()
         val newCategory = CategoryEntity(categoryId, name)
         insertCategoryInDB(newCategory)
     }

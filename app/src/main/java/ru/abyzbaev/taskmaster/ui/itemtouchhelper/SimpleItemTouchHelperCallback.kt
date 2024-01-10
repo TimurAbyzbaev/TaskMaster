@@ -2,12 +2,9 @@ package ru.abyzbaev.taskmaster.ui.itemtouchhelper
 
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import ru.abyzbaev.taskmaster.ui.itemtouchhelper.ItemTouchHelperAdapter
 
-class SimpleItemTouchHelperCallback(adapter: ItemTouchHelperAdapter): ItemTouchHelper.Callback() {
+class SimpleItemTouchHelperCallback(adapter: ItemTouchHelperAdapter) : ItemTouchHelper.Callback() {
     private val mAdapter: ItemTouchHelperAdapter = adapter
-
-
 
     override fun isLongPressDragEnabled(): Boolean {
         return true

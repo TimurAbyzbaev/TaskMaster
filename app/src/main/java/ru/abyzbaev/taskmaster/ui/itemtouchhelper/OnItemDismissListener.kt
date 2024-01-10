@@ -1,4 +1,4 @@
-package ru.abyzbaev.taskmaster.ui
+package ru.abyzbaev.taskmaster.ui.itemtouchhelper
 
 import ru.abyzbaev.taskmaster.data.model.TaskEntity
 

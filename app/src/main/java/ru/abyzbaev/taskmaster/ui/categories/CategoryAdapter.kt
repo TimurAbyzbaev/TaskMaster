@@ -8,10 +8,12 @@ import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import ru.abyzbaev.taskmaster.data.model.CategoryEntity
 import ru.abyzbaev.taskmaster.databinding.CategoryRecyclerviewItemBinding
+import ru.abyzbaev.taskmaster.ui.emptycategorylistener.OnEmptyCategoryListener
 import ru.abyzbaev.taskmaster.ui.tasks.TaskFragment
 
 class CategoryAdapter(
-    private val fragmentManager: FragmentManager
+    private val fragmentManager: FragmentManager,
+    private val emptyCategoryListener: OnEmptyCategoryListener
 ) : RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder>() {
 
     private var categories: List<CategoryEntity> = arrayListOf()
@@ -19,7 +21,9 @@ class CategoryAdapter(
     fun setData(categories: List<CategoryEntity>) {
         this.categories = arrayListOf()
         this.categories = categories
-
+        if(categories.isEmpty()) {
+            emptyCategoryListener.onEmptyCategoryList()
+        }
         notifyDataSetChanged()
     }
 
@@ -41,7 +45,7 @@ class CategoryAdapter(
 
             binding.root.addView(container)
 
-            val taskFragment = TaskFragment.newInstance(category.id)
+            val taskFragment = TaskFragment.newInstance(category.id, category ,emptyCategoryListener)
             fragmentManager.beginTransaction()
                 .replace(container.id, taskFragment)
                 .addToBackStack(null)

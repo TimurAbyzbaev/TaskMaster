@@ -1,4 +1,4 @@
-package ru.abyzbaev.taskmaster.ui
+package ru.abyzbaev.taskmaster.ui.itemtouchhelper
 
 interface ItemTouchHelperAdapter {
     fun onItemMove(fromPosition: Int, toPosition: Int)

@@ -10,11 +10,13 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import ru.abyzbaev.taskmaster.R
 import ru.abyzbaev.taskmaster.app.TaskMasterApplication
+import ru.abyzbaev.taskmaster.data.model.CategoryEntity
 import ru.abyzbaev.taskmaster.databinding.FragmentCategoryBinding
+import ru.abyzbaev.taskmaster.ui.emptycategorylistener.OnEmptyCategoryListener
 import javax.inject.Inject
 import kotlin.random.Random
 
-class CategoryFragment : Fragment() {
+class CategoryFragment : Fragment(), OnEmptyCategoryListener {
 
     @Inject
     lateinit var viewModelFactory: CategoryViewModelFactory
@@ -24,8 +26,10 @@ class CategoryFragment : Fragment() {
     private var _binding: FragmentCategoryBinding? = null
     private val binding get() = _binding!!
 
+    private val categories: List<CategoryEntity> = arrayListOf()
+
     private val adapter: CategoryAdapter by lazy {
-        CategoryAdapter(requireActivity().supportFragmentManager)
+        CategoryAdapter(requireActivity().supportFragmentManager, this)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -84,10 +88,16 @@ class CategoryFragment : Fragment() {
         viewModel = ViewModelProvider(this, viewModelFactory).get(CategoryViewModel::class.java)
 
         viewModel.subscribeToLiveData().observe(this.viewLifecycleOwner, Observer {
-            if (it.isEmpty()) {
-                binding.emptyTasksTextview.visibility = View.VISIBLE
-            }
+
             adapter.setData(it)
         })
+    }
+
+    override fun onEmptyCategory(category: CategoryEntity) {
+        viewModel.deleteCategoryFromDB(category)
+    }
+
+    override fun onEmptyCategoryList() {
+        binding.emptyTasksTextview.visibility = View.VISIBLE
     }
 }

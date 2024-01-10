@@ -21,6 +21,7 @@ import ru.abyzbaev.taskmaster.data.model.CategoryEntity
 import ru.abyzbaev.taskmaster.data.model.TaskEntity
 import ru.abyzbaev.taskmaster.databinding.FragmentTaskDetailBinding
 import ru.abyzbaev.taskmaster.ui.newcategoryfragment.NewCategoryFragment
+import ru.abyzbaev.taskmaster.utlis.formatDateFromLong
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -224,11 +225,7 @@ class TaskDetailFragment : Fragment() {
         binding.dueDate.text = formattedDate
     }
 
-    private fun formatDateFromLong(dateInMillis: Long): String {
-        val dateFormat = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
-        val date = Date(dateInMillis)
-        return dateFormat.format(date)
-    }
+
 
     companion object {
         private const val BOTTOM_SHEET_FRAGMENT_DIALOG_TAG =
